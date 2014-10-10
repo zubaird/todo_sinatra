@@ -17,5 +17,15 @@ describe Todos, "#run" do
     it "includes 'Welcome'" do
       expect( output ).to include("Welcome")
     end
+
+    xit "includes instruction for 'list' of a project"
+
+    xit "includes instruction for 'create' of a project"
+
+    xit "includes instruction for 'show' of a project"
+
+    xit "includes instruction for 'edit' of a project"
+    
+    xit "includes instruction for 'quit' of a project"
   end
 end
