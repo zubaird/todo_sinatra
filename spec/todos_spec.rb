@@ -17,15 +17,19 @@ describe Todos, "#run" do
     it "includes 'Welcome'" do
       expect( output ).to include("Welcome")
     end
+  end
 
-    xit "includes instruction for 'list' of a project"
+  describe "quitting" do
+    describe "when the input is quit" do
+      it "the program exits" do
+        expect(io_input).to receive(:gets).and_return('exit')
+        cli.run
+      end
+    end
 
-    xit "includes instruction for 'create' of a project"
-
-    xit "includes instruction for 'show' of a project"
-
-    xit "includes instruction for 'edit' of a project"
-    
-    xit "includes instruction for 'quit' of a project"
+    describe "when the input is something else" do
+      xit "asks for more input" do
+      end
+    end
   end
 end
