@@ -1,7 +1,5 @@
 require 'spec_helper'
 
-require 'spec_helper'
-
 describe Todos, "#run" do
   # Don't mind all this crazy setup, testing command line apps is hard!
   let(:io_input)  { StringIO.new("") }
