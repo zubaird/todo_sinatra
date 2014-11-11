@@ -23,14 +23,14 @@ describe TodoApp do
       expect(output).to include("'list' to list projects")
     end
 
-    xit "include instructions for listing projects" do
+    xit "include instructions for creating projects" do
       simulate_user_input("quit")
       app.run
 
       expect(output).to include("'create' to create a new project")
     end
 
-    xit "include instructions for listing projects" do
+    xit "include instructions for renaming projects" do
       simulate_user_input("quit")
       app.run
 
