@@ -34,7 +34,7 @@ describe TodoApp do
       simulate_user_input("quit")
       app.run
 
-      expect(output).to include("'edit' to edit a project")
+      expect(output).to include("'rename' to rename a project")
     end
   end
 end
