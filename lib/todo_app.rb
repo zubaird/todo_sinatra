@@ -12,6 +12,7 @@ class TodoApp < CommandLineApp
     puts "'create' to create a new project"
     puts "'edit' to edit a project"
     puts "'rename' to rename a project"
+    puts "'delete' to rename a project"
 
     welcome_menu = true
 
