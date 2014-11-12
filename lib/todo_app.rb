@@ -15,6 +15,14 @@ class TodoApp < CommandLineApp
     puts "'delete' to rename a project"
   end
 
+  def print_task_menu(project_name)
+    puts "Editing Project: #{project_name} "
+    puts "'list' to list tasks"
+    puts "'create' to create a new task"
+    puts "'edit' to edit a task"
+    puts "'complete' to complete a task and remove it from the list"
+  end
+
   def print_projects_list
     puts "Projects:\n  #{print_projects} "
   end
@@ -33,6 +41,10 @@ class TodoApp < CommandLineApp
 
   def print_prompt_for_new_project_name
     puts "Please enter the new project name:\n"
+  end
+
+  def print_project_edit_prompt
+    puts "Which project would you like to edit?\n"
   end
 
   def project_add(name)
@@ -82,60 +94,61 @@ class TodoApp < CommandLineApp
           project_rename(old_name, get_input)
         end
       elsif input == 'edit'
-        puts "Which project would you like to edit?\n"
-        puts "Projects:\n  *#{print_projects} "
-        edit_project = get_input
-        if @projects.include?(edit_project)
-          puts "Editing Project: #{print_projects} "
-          puts "'list' to list tasks"
-          puts "'create' to create a new task"
-          puts "'edit' to edit a task"
-          puts "'complete' to complete a task and remove it from the list"
+        print_project_edit_prompt
+        project_name = get_input
 
+        if project_present?(project_name)
+          run_task_menu(project_name)
 
-          task_menu = true
-          while task_menu
-            task_input = get_input
-            if task_input == 'list'
-              puts "  #{list_tasks}"
-            elsif task_input == 'create'
-              puts "Please enter the task you would like to add."
-              new_task = get_input
-              @tasks << new_task
-            elsif task_input == 'edit'
-              puts "Please enter the task you would like to edit."
-              edit_task = get_input
-              if @tasks.include?(edit_task)
-                puts "Please enter the new task name:\n"
-                new_task_name = get_input
-                @tasks.delete(edit_task)
-                @tasks << new_task_name
-              else
-                puts "task not found: 'not here'"
-              end
-            elsif task_input == 'complete'
-              puts "Which task have you completed?"
-              puts "  #{list_tasks}"
-              complete_task = get_input
-              if @tasks.include?(complete_task)
-                @tasks.delete(complete_task)
-                complete_task = "#{complete_task}: completed"
-                @tasks << complete_task
-              else
-                puts "task not found: 'not here'"
-              end
-            elsif task_input == 'back'
-              print_project_menu
-              task_menu = false
-            elsif task_input == 'quit'
-              welcome_menu = false
-              task_menu = false
-            end
-          end
+          print_task_menu(project_name)
         end
 
       elsif input == 'quit'
         welcome_menu = false
+      end
+    end
+  end
+
+  def run_task_menu(project_name)
+    print_task_menu(project_name)
+
+    task_menu = true
+    while task_menu
+      task_input = get_input
+      if task_input == 'list'
+        puts "  #{list_tasks}"
+      elsif task_input == 'create'
+        puts "Please enter the task you would like to add."
+        new_task = get_input
+        @tasks << new_task
+      elsif task_input == 'edit'
+        puts "Please enter the task you would like to edit."
+        edit_task = get_input
+        if @tasks.include?(edit_task)
+          puts "Please enter the new task name:\n"
+          new_task_name = get_input
+          @tasks.delete(edit_task)
+          @tasks << new_task_name
+        else
+          puts "task not found: 'not here'"
+        end
+      elsif task_input == 'complete'
+        puts "Which task have you completed?"
+        puts "  #{list_tasks}"
+        complete_task = get_input
+        if @tasks.include?(complete_task)
+          @tasks.delete(complete_task)
+          complete_task = "#{complete_task}: completed"
+          @tasks << complete_task
+        else
+          puts "task not found: 'not here'"
+        end
+      elsif task_input == 'back'
+        print_project_menu
+        task_menu = false
+      elsif task_input == 'quit'
+        welcome_menu = false
+        task_menu = false
       end
     end
   end
