@@ -8,6 +8,10 @@ class TodoApp < CommandLineApp
     @tasks = []
   end
 
+  def get_input
+    gets.chomp
+  end
+
   def print_project_menu
     puts "Welcome"
     puts "'list' to list projects"
@@ -63,27 +67,58 @@ class TodoApp < CommandLineApp
     puts "Which project would you like to edit?\n"
   end
 
+  def print_task_edit_prompt
+    puts "Please enter the task you would like to edit."
+  end
+
+  def print_prompt_for_new_task_name
+    puts "Please enter the new task name:\n"
+  end
+
+  def print_task_not_here_message(name)
+    puts "task not found: '#{name}'"
+  end
+
+  def print_new_task_prompt
+    puts "Please enter the task you would like to add."
+  end
+
   def project_add(name)
-    @projects << name
+    projects << name
   end
 
   def project_delete(name)
     if project_present?(name)
-      @projects.delete(name)
+      projects.delete(name)
     end
   end
 
   def project_present?(name)
-    @projects.include?(name)
+    projects.include?(name)
   end
 
   def project_rename(old_name, new_name)
-    @projects.delete(old_name)
-    @projects << new_name
+    projects.delete(old_name)
+    projects << new_name
   end
 
-  def get_input
-    gets.chomp
+  def add_task(name)
+    tasks << name
+  end
+
+  def task_present?(name)
+    tasks.include?(name)
+  end
+
+  def task_rename(old_name, new_name)
+    tasks.delete(old_name)
+    tasks << new_name
+  end
+
+  def complete_task(name)
+    tasks.delete(name)
+    completed_task = "#{name}: completed"
+    tasks << completed_task
   end
 
   def run
@@ -122,35 +157,6 @@ class TodoApp < CommandLineApp
     end
   end
 
-  def print_new_task_prompt
-    puts "Please enter the task you would like to add."
-  end
-
-  def add_task(name)
-    tasks << name
-  end
-
-  def task_present?(name)
-    tasks.include?(name)
-  end
-
-  def task_rename(old_name, new_name)
-    tasks.delete(old_name)
-    tasks << new_name
-  end
-
-  def print_task_edit_prompt
-    puts "Please enter the task you would like to edit."
-  end
-
-  def print_prompt_for_new_task_name
-    puts "Please enter the new task name:\n"
-  end
-
-  def print_task_not_here_message(name)
-    puts "task not found: '#{name}'"
-  end
-
   def run_task_menu(project_name)
     print_task_menu(project_name)
 
@@ -172,46 +178,17 @@ class TodoApp < CommandLineApp
         else
           print_task_not_here_message(old_name)
         end
-
-        # edit_task = get_input
-        # if @tasks.include?(edit_task)
-        #   puts "Please enter the new task name:\n"
-        #   new_task_name = get_input
-        #   @tasks.delete(edit_task)
-        #   @tasks << new_task_name
-        # else
-        #   puts "task not found: 'not here'"
-        # end
       elsif task_input == 'complete'
-        puts "Which task have you completed?"
-        puts "  #{list_tasks}"
         complete_task = get_input
-        if @tasks.include?(complete_task)
-          @tasks.delete(complete_task)
-          complete_task = "#{complete_task}: completed"
-          @tasks << complete_task
+        if task_present?(complete_task)
+          complete_task(complete_task)
         else
-          puts "task not found: 'not here'"
+          print_task_not_here_message(complete_task)
         end
       elsif task_input == 'back'
         print_project_menu
         task_menu = false
-      elsif task_input == 'quit'
-        welcome_menu = false
-        task_menu = false
       end
-    end
-  end
-
-  def list_tasks
-    list_tasks =''
-    if @tasks == []
-      "none"
-    else
-      list_tasks = @tasks.each do |name|
-         name
-      end
-      list_tasks.join
     end
   end
 
