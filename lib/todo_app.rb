@@ -1,12 +1,11 @@
 class TodoApp < CommandLineApp
-  attr_reader :projects, :tasks, :view
+  attr_reader :view, :model
 
   def initialize(input, output)
     @input = input
     @view = View.new(output)
     # @output = output
-    @projects = []
-    @tasks = []
+    @model = Model.new
   end
 
   def get_input
@@ -82,44 +81,36 @@ class TodoApp < CommandLineApp
 
   # ------------
 
-  # M, projects collection
   def project_add(name)
-    projects << name
+    model.project_add(name)
   end
 
   def project_delete(name)
-    if project_present?(name)
-      projects.delete(name)
-    end
+    model.project_delete(name)
   end
 
   def project_present?(name)
-    projects.include?(name)
+    model.project_present?(name)
   end
 
   def project_rename(old_name, new_name)
-    projects.delete(old_name)
-    projects << new_name
+    model.project_rename(old_name, new_name)
   end
 
-  # M, tasks collection
   def add_task(name)
-    tasks << name
+    model.add_task(name)
   end
 
   def task_present?(name)
-    tasks.include?(name)
+    model.task_present?(name)
   end
 
   def task_rename(old_name, new_name)
-    tasks.delete(old_name)
-    tasks << new_name
+    model.task_rename(old_name, new_name)
   end
 
   def complete_task(name)
-    tasks.delete(name)
-    completed_task = "#{name}: completed"
-    tasks << completed_task
+    model.complete_task(name)
   end
 
   # router
@@ -136,7 +127,7 @@ class TodoApp < CommandLineApp
       input = get_input
 
       if input == 'list'
-        print_projects_list(projects)
+        print_projects_list(model.projects)
       elsif input == 'create'
         print_project_create_prompt
         project_add(get_input)
@@ -171,7 +162,7 @@ class TodoApp < CommandLineApp
     while task_menu
       task_input = get_input
       if task_input == 'list'
-        print_tasks_list(tasks)
+        print_tasks_list(model.tasks)
       elsif task_input == 'create'
         print_new_task_prompt
         add_task(get_input)
