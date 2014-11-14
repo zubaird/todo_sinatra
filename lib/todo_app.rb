@@ -1,14 +1,12 @@
 class TodoApp < CommandLineApp
-  attr_reader :view, :model
+  attr_reader :view, :model, :controller
 
+  extend Forwardable
   def initialize(input, output)
     @input = input
-    @view = View.new(output)
+    @view = View.new(output, input)
     @model = Model.new
-  end
-
-  def get_input
-    gets.chomp
+    @controller = Controller.new(model, view)
   end
 
   # router
@@ -16,78 +14,74 @@ class TodoApp < CommandLineApp
     run_project_menu
   end
 
+  def_delegators :view,
+    :print_project_menu,
+    :print_task_menu,
+    :get_input
+
+  def_delegators :controller,
+    :list_project_action,
+    :create_project_action,
+    :delete_project_action,
+    :rename_project_action,
+    # :edit_project_action,
+    :list_task_action,
+    :create_task_action,
+    :edit_task_action,
+    :complete_task_action
+
+  def edit_project_action
+    view.print_project_edit_prompt
+    project_name = get_input
+    if model.project_present?(project_name)
+      run_task_menu(project_name)
+      view.print_task_menu(project_name)
+    end
+  end
+
+
+
   def run_project_menu
-    view.print_project_menu
+    print_project_menu
 
     welcome_menu = true
-
     while welcome_menu
       input = get_input
 
-      if input == 'list'
-        view.print_projects_list(model.projects)
+      welcome_menu = false if input == 'quit'
+
+      if input == 'list' # 'if' is router
+        list_project_action # the 'action' is the conroller
       elsif input == 'create'
-        view.print_project_create_prompt
-        model.project_add(get_input)
-        view.print_project_menu
+        create_project_action
       elsif input == 'delete'
-        view.print_project_delete_prompt
-        model.project_delete(get_input)
+        delete_project_action
       elsif input == 'rename'
-        view.print_project_rename_prompt
-        if model.project_present?(old_name = get_input)
-          view.print_prompt_for_new_project_name
-          model.project_rename(old_name, get_input)
-        end
+        rename_project_action
       elsif input == 'edit'
-        view.print_project_edit_prompt
-        project_name = get_input
-        if model.project_present?(project_name)
-          run_task_menu(project_name)
-          view.print_task_menu(project_name)
-        end
-      elsif input == 'quit'
-        welcome_menu = false
+        edit_project_action
       end
     end
   end
 
   def run_task_menu(project_name)
-    view.print_task_menu(project_name)
+    print_task_menu(project_name)
 
     task_menu = true
-
     while task_menu
       task_input = get_input
       if task_input == 'list'
-        view.print_tasks_list(model.tasks)
+        list_task_action
       elsif task_input == 'create'
-        view.print_new_task_prompt
-        model.add_task(get_input)
+        create_task_action
       elsif task_input == 'edit'
-        view.print_task_edit_prompt
-        old_name = get_input
-        if model.task_present?(old_name)
-          view.print_prompt_for_new_task_name
-          model.task_rename(old_name, get_input)
-        else
-          view.print_task_not_here_message(old_name)
-        end
+        edit_task_action
       elsif task_input == 'complete'
-        complete_task = get_input
-        if model.task_present?(complete_task)
-          model.complete_task(complete_task)
-        else
-          view.print_task_not_here_message(complete_task)
-        end
+        complete_task_action
       elsif task_input == 'back'
-        view.print_project_menu
+        print_project_menu
         task_menu = false
       end
     end
-  end
-
-  def real_puts message = ""
-    $stdout.puts message
   end
 end
