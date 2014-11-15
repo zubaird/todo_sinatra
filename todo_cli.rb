@@ -4,4 +4,5 @@ require_relative "./lib/model"
 require_relative "./lib/view"
 require_relative "./lib/controller"
 
+
 TodoApp.new($stdin, $stdout).run

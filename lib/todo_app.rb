@@ -1,6 +1,6 @@
 class TodoApp < CommandLineApp
   attr_reader :view, :model, :controller
-
+  require 'forwardable'
   extend Forwardable
   def initialize(input, output)
     @input = input
@@ -12,7 +12,10 @@ class TodoApp < CommandLineApp
   # router
   def run
     run_project_menu
+    write_file
   end
+  
+  def_delegator :model, :write_file
 
   def_delegators :view,
     :print_project_menu,
@@ -38,8 +41,6 @@ class TodoApp < CommandLineApp
       view.print_task_menu(project_name)
     end
   end
-
-
 
   def run_project_menu
     print_project_menu
